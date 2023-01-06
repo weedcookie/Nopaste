@@ -1,0 +1,180 @@
+{% extends 'header.html' %}
+{% block title %} Profile {% endblock %}
+{% block content %}
+<section class="vh-100 gradient-custom">
+  <div class="container py-5 h-5">
+    <div class="row d-flex justify-content-center align-items-center h-5">
+     <!--  <div class="input-group mb-3">
+        <span class="input-group-text" id="basic-addon1">@</span>
+        <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
+      </div> -->
+
+
+      <!-- Change Username -->
+      <div class="modal" id="username_modal" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Change Username</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="/change_username" method="POST" id="username_modal_form">
+              <div class="modal-body">
+                <p>Set new username.</p>
+                <div class="form-outline form-white mb-4">
+                  <input type="text" name="username" id="typeEmailX" class="form-control form-control-lg" required />
+                  <label class="form-label" for="typeEmailX">Username</label>
+                </div>
+                <div class="form-outline form-white mb-4">
+                  <input type="password" name="password1" id="typePasswordX" class="form-control form-control-lg" required />
+                  <label class="form-label" for="typePasswordX">Password</label>
+                </div>
+              </div>
+            </form>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary" onclick="change_username()" >Save changes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Change Password -->
+      <div class="modal" id="password_modal" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Change Password</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="/change_password" method="POST" id="password_modal_form">
+              <div class="modal-body">
+                <p>Set new password.</p>
+                <div class="form-outline form-white mb-4">
+                  <input type="password" name="password2" id="typePasswordX" class="form-control form-control-lg" required />
+                  <label class="form-label" for="typePasswordX">Current Password</label>
+                </div>
+                <div class="form-outline form-white mb-4">
+                  <input type="password" name="password3" id="typePasswordX" class="form-control form-control-lg" required />
+                  <label class="form-label" for="typePasswordX">New Password</label>
+                </div>
+              </div>
+            </form>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary" onclick="change_password()">Save changes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+      <!-- Create API key -->
+      <div class="modal" id="api_key_modal" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Create API key </h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="/change_api" method="POST" id="api_modal_form">
+              <div class="modal-body">
+                <p>Generated API key.</p>
+                <div class="form-outline form-white mb-4">
+                  <input type="text" name="api_key" id="api_key_field" class="form-control form-control-lg"/> 
+                </div>
+              </div>
+
+            </form>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary" onclick="change_api()">Create Key</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="container-fluid">
+        <button class="btn btn-outline-light btn-lg px-5" data-bs-toggle="modal" data-bs-target="#username_modal">Change Username</button>
+        <button class="btn btn-outline-light btn-lg px-5" data-bs-toggle="modal" data-bs-target="#password_modal">Change Password</button>
+        <button class="btn btn-outline-light btn-lg px-5" data-bs-toggle="modal" data-bs-target="#api_key_modal">Create API Key </button>
+      </div>
+
+
+      <div class="card bg-dark text-white" style="border-radius: 1rem;">
+        <div class="card-body p-5 text-center">
+          <div class="container">
+            <div class="row">
+              
+              <div class="col">
+                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp" alt="avatar"
+              class="rounded-circle img-fluid" style="width: 150px;">
+                <h4 class="mb-2">{{ session['user'] }}</h4>
+                <p class="text-muted mb-4"> email </p>
+              </div>
+
+              <div class="col">
+                <ul class="list-group">
+                  <li class="list-group-item">Total Pastes : {{ public_pastes + private_pastes}}</li>
+                  <li class="list-group-item">Total Private Pastes : {{ private_pastes }} </li>
+                  <li class="list-group-item">Total Public Pastes : {{ public_pastes }} </li>
+                </ul> 
+
+              </div>
+              <label class="form-label" for="typePasswordX">API key</label>
+              {% if usr.api_key %}
+                <input type="text" name="password" id="api_key_field" class="form-control form-control-lg" readonly  value="{{ usr.api_key }}" />
+              {% else %}
+                <input type="text" name="password" id="api_key_field" class="form-control form-control-lg" readonly  value="No API key is set" />
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<script type="text/javascript" >
+  function generateApiKey() {
+    // Generate a random array of bytes
+    const array = new Uint8Array(16);
+    crypto.getRandomValues(array);
+
+    // Convert the bytes to a hexadecimal string
+    const apiKey = Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+
+    return apiKey;
+  }
+
+  $('#api_key_modal').on('show.bs.modal', function () {
+    let elm = document.getElementById('api_key_field');
+    elm.value = generateApiKey();
+    elm.readOnly = true;
+  });
+
+
+
+  function change_username()
+  {
+    let username_form = document.getElementById("username_modal_form");
+    username_form.submit();
+  }
+
+  function change_password()
+  {
+    let password_form = document.getElementById("password_modal_form");
+    password_form.submit();
+  }
+
+  function change_api()
+  {
+    let api_form = document.getElementById("api_modal_form");
+    api_form.submit();
+  }
+
+
+  
+</script>
+{% endblock %}
